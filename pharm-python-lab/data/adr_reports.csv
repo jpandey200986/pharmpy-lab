@@ -1,0 +1,13 @@
+Report_ID,Drug_Name,Therapeutic_Class,Patient_Age,Gender,Adverse_Reaction,Severity,Outcome
+ADR001,Amoxicillin,Antibiotic,28,F,Skin Rash,Mild,Recovered
+ADR002,Ibuprofen,NSAID,64,M,Gastric Pain,Moderate,Recovered
+ADR003,Atorvastatin,Cardiovascular,58,M,Myalgia,Moderate,Recovered
+ADR004,Metformin,Antidiabetic,52,F,Nausea,Mild,Recovered
+ADR005,Ciprofloxacin,Antibiotic,71,F,Tendonitis,Severe,Recovering
+ADR006,Aspirin,NSAID,67,M,Gastrointestinal Bleed,Severe,Hospitalized
+ADR007,Omeprazole,Gastrointestinal,45,M,Headache,Mild,Recovered
+ADR008,Amoxicillin,Antibiotic,8,M,Urticaria,Moderate,Recovered
+ADR009,Paracetamol,Analgesic,35,F,Nausea,Mild,Recovered
+ADR010,Atorvastatin,Cardiovascular,62,F,Elevated Liver Enzymes,Severe,Recovering
+ADR011,Ibuprofen,NSAID,49,F,Dizziness,Mild,Recovered
+ADR012,Metformin,Antidiabetic,59,M,Diarrhea,Moderate,Recovered

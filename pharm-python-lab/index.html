@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmPy Lab — B.Pharm Semester I Edition | Medicaps University</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CodeMirror Editor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    
+    <!-- Pyodide (Python WebAssembly) -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+    
+    <!-- Application Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fas fa-prescription-bottle-alt"></i>
+            </div>
+            <div class="brand-text">
+                <h1>
+                    PharmPy Lab
+                    <span class="brand-badge">B.Pharm Sem I</span>
+                </h1>
+                <p>Learn Python Through Pharmaceutical Sciences • Medicaps University BP101T</p>
+            </div>
+        </div>
+
+        <div class="header-center">
+            <div class="progress-widget" title="Official BP101T Course Progress">
+                <span class="progress-label">Course:</span>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                </div>
+                <span class="progress-count" id="progress-count-text">0 / 52 Lessons (0%)</span>
+            </div>
+
+            <div style="display: flex; gap: 0.35rem;">
+                <button class="btn btn-primary btn-sm" id="nav-btn-curriculum">
+                    <i class="fas fa-graduation-cap"></i> BP101T Curriculum
+                </button>
+                <button class="btn btn-outline btn-sm" id="nav-btn-sandbox">
+                    <i class="fas fa-flask-vial"></i> Pharma Sandbox
+                </button>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button class="btn btn-outline btn-sm" id="faculty-mode-btn" title="Toggle Faculty Inspection Mode">
+                <i class="fas fa-chalkboard-teacher"></i> Faculty Mode
+            </button>
+            <button class="btn btn-outline btn-sm" id="btn-cheat-sheet" title="Python & Pharmacy Formulas Cheat Sheet">
+                <i class="fas fa-book"></i> Cheat Sheet
+            </button>
+            <button class="btn-icon-only" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+                <i class="fas fa-moon" id="theme-toggle-icon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-container">
+        
+        <!-- Sidebar Navigation: Units Accordion & Search -->
+        <aside class="app-sidebar">
+            <div class="sidebar-search">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="lesson-search-input" class="search-input" placeholder="Search BP101T lessons or drugs...">
+                </div>
+            </div>
+            <div class="sidebar-list" id="sidebar-units-container">
+                <!-- Populated dynamically by app.js -->
+            </div>
+        </aside>
+
+        <!-- Curriculum Workspace -->
+        <section class="workspace-split" id="workspace-curriculum">
+            
+            <!-- Left Pane: Problem Description & Clinical Context -->
+            <div class="problem-panel">
+                <div class="problem-content" id="lesson-content-area">
+                    <!-- Populated dynamically by app.js -->
+                </div>
+            </div>
+
+            <!-- Right Pane: Code Editor & Execution Results -->
+            <div class="editor-panel">
+                <div class="editor-toolbar">
+                    <div class="file-tab">
+                        <i class="fab fa-python" style="color:#0284c7;"></i>
+                        <span id="current-filename">prescription.py</span>
+                    </div>
+                    <div class="editor-actions">
+                        <button class="btn btn-outline btn-sm" id="btn-copy-code" title="Copy Code">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="btn btn-outline btn-sm" id="btn-reset-code" title="Reset to Guided Starter Code">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CodeMirror Editor Area -->
+                <div class="code-container">
+                    <textarea id="code-editor-textarea"></textarea>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="editor-footer-bar">
+                    <div class="action-buttons-group">
+                        <button class="btn btn-primary" id="btn-run-code" title="Execute script (Ctrl+Enter)">
+                            <i class="fas fa-play"></i> Run Code
+                        </button>
+                        <button class="btn btn-success" id="btn-test-solution" title="Validate against educational test suite">
+                            <i class="fas fa-vial-circle-check"></i> Test Solution
+                        </button>
+                        <button class="btn btn-outline" id="btn-tiered-hint" title="Get progressive clues">
+                            <i class="fas fa-lightbulb" style="color:var(--warning);"></i> Need a Hint? (1/3)
+                        </button>
+                        <button class="btn btn-outline" id="btn-explain-code" title="Line-by-line pedagogical breakdown">
+                            <i class="fas fa-comment-dots" style="color:var(--primary);"></i> Explain My Code
+                        </button>
+                        <button class="btn btn-secondary" id="btn-plot-curve" style="display:none;" title="Render Matplotlib Curve">
+                            <i class="fas fa-chart-line"></i> Plot Curve
+                        </button>
+                    </div>
+
+                    <div class="runtime-status-tag">
+                        <div class="status-dot ready" id="runtime-status-dot"></div>
+                        <span id="runtime-status-label">Initializing...</span>
+                    </div>
+                </div>
+
+                <!-- Bottom Drawer: Terminal, Test Results, Scientific Curves -->
+                <div class="output-drawer">
+                    <div class="drawer-tabs">
+                        <button class="tab-btn active" data-tab="terminal">
+                            <i class="fas fa-terminal"></i> Terminal Console
+                        </button>
+                        <button class="tab-btn" data-tab="tests">
+                            <i class="fas fa-list-check"></i> Test Results 
+                            <span class="tab-badge" id="test-results-badge">-</span>
+                        </button>
+                        <button class="tab-btn" data-tab="graph">
+                            <i class="fas fa-chart-area"></i> Scientific Curves
+                        </button>
+                    </div>
+
+                    <div class="drawer-content">
+                        <!-- Terminal View -->
+                        <div id="terminal-view">
+                            <div class="terminal-console terminal-stdout" id="terminal-console-output">Loading Python environment...</div>
+                        </div>
+
+                        <!-- Test Results View -->
+                        <div id="tests-view" style="display:none;">
+                            <div style="color:var(--text-muted); font-size:0.82rem;">
+                                Click "Test Solution" above to evaluate your Python code against automated test cases.
+                            </div>
+                        </div>
+
+                        <!-- Graph Output View -->
+                        <div id="graph-view" style="display:none;">
+                            <div style="color:var(--text-muted); font-size:0.82rem;">
+                                Click "Plot Curve" above to generate and inspect pharmacokinetic and spectrophotometric curves.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Pharma Sandbox Workspace -->
+        <section class="sandbox-view" id="workspace-sandbox" style="width:100%; display:none; flex-direction:column;">
+            <div style="height:48px; background:var(--bg-sidebar); border-bottom:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between; padding:0 1rem;">
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <strong style="font-size:0.85rem;"><i class="fas fa-flask"></i> Pharma Python Playground</strong>
+                    <select id="sandbox-template-select" style="padding:0.25rem 0.5rem; font-size:0.8rem; border-radius:4px; border:1px solid var(--border-color); background:var(--bg-card); color:var(--text-main);">
+                        <option value="">-- Load Pharmacy Script Template --</option>
+                        <option value="pandas">Pandas: Inspect Medicine Inventory</option>
+                        <option value="qc">Pandas: Tablet Batch Quality Control</option>
+                        <option value="plot">Matplotlib: Plasma Concentration-Time Curve</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-sm" id="btn-sandbox-run">
+                    <i class="fas fa-play"></i> Run Sandbox Script
+                </button>
+            </div>
+
+            <div style="flex:1; display:flex; overflow:hidden;">
+                <div style="flex:1; position:relative;">
+                    <textarea id="sandbox-editor-textarea"># Welcome to the PharmPy Sandbox!
+# Write any custom Python code to analyze lab data or test formulas.
+
+import math
+
+# Example: Compute elimination half-life from rate constant
+ke = 0.15  # hr^-1
+t_half = math.log(2) / ke
+print(f"Elimination rate constant ke: {ke} hr^-1")
+print(f"Biological half-life: {t_half:.2f} hours")
+</textarea>
+                </div>
+                <div style="width:40%; background:var(--bg-card); border-left:1px solid var(--border-color); display:flex; flex-direction:column;">
+                    <div style="height:36px; background:var(--bg-sidebar); border-bottom:1px solid var(--border-color); display:flex; align-items:center; padding:0 0.75rem; font-size:0.78rem; font-weight:600; color:var(--text-muted);">
+                        <i class="fas fa-terminal" style="margin-right:0.4rem;"></i> Sandbox Output
+                    </div>
+                    <div style="flex:1; padding:0.75rem; overflow-y:auto; background:var(--bg-code);">
+                        <div class="terminal-console terminal-stdout" id="sandbox-terminal-output">Ready to execute. Click 'Run Sandbox Script' above.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Formula & Syntax Cheat Sheet Modal -->
+    <div class="modal-overlay" id="cheat-sheet-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fas fa-book" style="color:var(--primary); margin-right:0.4rem;"></i> BP101T Syntax & Pharmacy Formula Quick Reference</h3>
+                <button class="btn-icon-only" id="btn-close-cheat-sheet">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cheat-sheet-grid" id="cheat-sheet-list">
+                    <!-- Populated dynamically by app.js -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" onclick="document.getElementById('cheat-sheet-modal').classList.remove('open')">
+                    Close Reference
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explain My Code Modal -->
+    <div class="modal-overlay" id="explain-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fas fa-comment-dots" style="color:var(--primary); margin-right:0.4rem;"></i> Explain My Code — Plain Pharmacy English</h3>
+                <button class="btn-icon-only" id="btn-close-explain">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="explain-modal-body">
+                <!-- Populated dynamically by app.js -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" onclick="document.getElementById('explain-modal').classList.remove('open')">
+                    Understood, Back to Code
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Solution Modal -->
+    <div class="modal-overlay" id="solution-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fas fa-unlock-alt" style="color:var(--primary); margin-right:0.4rem;"></i> Model Python Implementation & Explanation</h3>
+                <button class="btn-icon-only" id="btn-close-solution">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="solution-modal-body">
+                <!-- Populated dynamically by app.js -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" onclick="document.getElementById('solution-modal').classList.remove('open')">
+                    Got It, Back to Lesson
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unit Checkpoint Quiz Modal -->
+    <div class="modal-overlay" id="quiz-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="quiz-modal-title"><i class="fas fa-tasks" style="color:var(--primary); margin-right:0.4rem;"></i> Unit Checkpoint Quiz</h3>
+                <button class="btn-icon-only" id="btn-close-quiz">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="quiz-modal-body">
+                <!-- Populated dynamically by app.js -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('quiz-modal').classList.remove('open')">
+                    Cancel
+                </button>
+                <button class="btn btn-primary btn-sm" id="btn-submit-quiz">
+                    Submit Answers & Check Score
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Scripts -->
+    <script src="js/curriculum.js"></script>
+    <script src="js/problems.js"></script>
+    <script src="js/pyodide-runner.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

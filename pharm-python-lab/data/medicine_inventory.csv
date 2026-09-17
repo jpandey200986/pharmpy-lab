@@ -1,0 +1,11 @@
+Batch_ID,Drug_Name,Dosage_Form,Strength_mg,Stock_Quantity,Unit_Price_INR,Expiry_Date
+B101,Paracetamol,Tablet,500,120,2.5,2028-06-30
+B102,Amoxicillin,Capsule,250,45,6.0,2027-11-15
+B103,Cetirizine,Tablet,10,210,3.0,2028-01-31
+B104,Metformin,Tablet,500,85,4.5,2027-09-30
+B105,Ibuprofen,Tablet,400,30,5.0,2027-04-30
+B106,Azithromycin,Tablet,500,15,18.0,2028-08-31
+B107,Omeprazole,Capsule,20,150,7.5,2028-03-31
+B108,Atorvastatin,Tablet,10,60,11.0,2027-12-31
+B109,Ciprofloxacin,Tablet,500,40,9.0,2027-08-15
+B110,Salbutamol,Inhaler,2,25,125.0,2028-10-31
